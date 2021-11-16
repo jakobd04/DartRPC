@@ -53,6 +53,8 @@ class Client implements ClientInterface{
   //The hash of the public key of the remote end
   late String remoteKeyHash;
 
+  final bool authenticate;
+
   //closed Future and close Function implemented via _closed Completer
   final Completer<RawSocketEvent> _closed = Completer();
   Future<RawSocketEvent> get closed => _closed.future;
@@ -70,7 +72,7 @@ class Client implements ClientInterface{
   void releaseReceive() => _receiveLock.complete();
   void lockReceive() => _receiveLock.isCompleted ? _receiveLock = Completer() : null;
 
-  Client({required this.host, required this.port, required this.rootHandler, this.basePath = './', this.hLen = 128}) {
+  Client({required this.host, required this.port, required this.rootHandler, this.basePath = './', this.authenticate = false, this.hLen = 128}) {
     final logFile = File(p.join(basePath, 'logs/log.log'));
     logFile.createSync(recursive: true);
     logFile.writeAsStringSync('');
@@ -81,7 +83,10 @@ class Client implements ClientInterface{
     });
   }
 
-  Client.fromExisting({required this.host, required this.port, required this.connection, this.basePath = './', required this.server}) :hLen = server!.hLen, rootHandler = server.rootHandler {
+  Client.fromExisting({required this.host, required this.port, required this.connection, this.basePath = './', required this.server}) :
+        hLen = server!.hLen,
+        rootHandler = server.rootHandler,
+        authenticate = server.authenticate {
     _logger = Logger(connection!.hashCode.toString());
     server!.closed.then((value) => _closed.complete(value));
   }
@@ -322,6 +327,14 @@ class Client implements ClientInterface{
 
     connection!.write(out);
 
+    if (authenticate) {
+      final file = File(p.join(basePath, 'trusted'));
+      if (!file.existsSync()) file.createSync();
+      if (!file.readAsLinesSync().contains(remoteKeyHash)) {
+        close();
+      }
+    }
+
     releaseSend();
     releaseReceive();
     
@@ -340,6 +353,14 @@ class Client implements ClientInterface{
       _logger.severe('Something went wrong with the key exchange, shutting down the connection');
       close();
       return;
+    }
+
+    if (authenticate) {
+      final file = File(p.join(basePath, 'trusted'));
+      if (!file.existsSync()) file.createSync();
+      if (!file.readAsLinesSync().contains(remoteKeyHash)) {
+        close();
+      }
     }
 
     releaseSend();

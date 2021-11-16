@@ -21,9 +21,9 @@ abstract class ClientInterface {
 
   late String remoteKeyHash;
 
-  ClientInterface({required this.host, required this.port, required this.rootHandler, this.basePath = './', this.hLen = 128});
+  final bool authenticate;
 
-  ClientInterface.fromConnection({required this.connection, required this.rootHandler, this.basePath = './', this.hLen = 128}) : host = connection!.address.address, port = connection.port;
+  ClientInterface({required this.host, required this.port, required this.rootHandler, this.basePath = './', this.authenticate = false, this.hLen = 128});
 
   void start();
 

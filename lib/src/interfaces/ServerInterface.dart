@@ -22,7 +22,9 @@ abstract class ServerInterface {
   late final RSAPublicKey publicKey;
   late final String publicKeyPem;
 
-  ServerInterface({required this.host, required this.port, required this.rootHandler, this.basePath = './', this.hLen = 128});
+  final bool authenticate;
+
+  ServerInterface({required this.host, required this.port, required this.rootHandler, this.basePath = './', this.authenticate = false, this.hLen = 128});
 
   void start();
 

@@ -35,7 +35,9 @@ class Server implements ServerInterface {
   late final RSAPublicKey publicKey;
   late final String publicKeyPem;
 
-  Server({required this.host, required this.port, required this.rootHandler, this.basePath = './', this.hLen = 128}) {
+  final bool authenticate;
+
+  Server({required this.host, required this.port, required this.rootHandler, this.basePath = './', this.authenticate = false, this.hLen = 128}) {
     final logFile = File(p.join(basePath, 'logs/log.log'));
     logFile.createSync(recursive: true);
     logFile.writeAsStringSync(''); //Clear the log file
