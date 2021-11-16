@@ -6,7 +6,7 @@ class SendBackHandler extends MessageHandlerInterface {
     super.init(rootHandler);
 
     stream.listen((event) {
-      event.headers['dest'] = event.headers.remove('respDest') ?? 'print';
+      event.headers['destination'] = event.headers.remove('respDest') ?? 'logger';
       event.content = 'Sent back:\n' + event.content!;
       event.client.send(event);
     });

@@ -9,7 +9,6 @@ import 'package:my_rpc/src/predefinedHandlers/RootHandler.dart';
 import 'package:path/path.dart' as p;
 
 import 'package:my_rpc/src/interfaces/ClientInterface.dart';
-import 'package:my_rpc/src/interfaces/MessageHandlerInterface.dart';
 import 'package:my_rpc/src/interfaces/ServerInterface.dart';
 import 'package:my_rpc/src/utils/KeyHelperRSA.dart';
 import 'package:pointycastle/export.dart';
